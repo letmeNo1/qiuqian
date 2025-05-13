@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='yanzhengma.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='script2.js') }}"></script>
+    <title>观音灵签</title>
+</head>
+<body class="font-sans min-h-screen">
+    <div class="bg-container"></div>
+    <audio id="bgMusic" loop>
+        <source src="{{ url_for('static', filename='audio/bgm.mp3') }}" type="audio/mpeg">
+        您的浏览器不支持音频播放。
+    </audio>
+    <!-- 音乐控制按钮 -->
+    <button id="musicControl" class="fixed bottom-6 right-6 z-50 bg-primary hover:bg-primary/90 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg transition-all duration-300">
+        <i class="fa-solid fa-volume-high"></i>
+    </button>
+    <!-- 选项卡容器 -->
+    <div class="tab-container">
+        <button id="home-tab" class="tab-button active">观音签介绍</button>
+        <button id="lottery-tab" class="tab-button">投掷抽签</button>
+        <button id="intro-tab" class="tab-button">宣传介绍</button>
+    </div>
+    <!-- 主页内容 -->
+    <div id="home-content" class="tab-content active">
+        <div class="container mx-auto px-4 py-8 md:py-12">
+            <!-- 图像展示区域 -->
+            <div class="mt-8 rounded-xl overflow-hidden shadow-lg w-[90%] mx-auto">
+                <img id="introduce" src="{{ url_for('static', filename='images/intro.jpg') }}" alt="介绍" style="display: none; width: 100%; height: auto;">
+            </div>
+        </div>
+    </div>
+    <!-- 投掷抽签内容 -->
+    <div id="lottery-content" class="tab-content">
+        <div class="container mx-auto px-4 py-8 md:py-12">
+            <header class="text-center mb-8">
+                <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-dark text-shadow mb-4">
+                    南普陀寺·观音灵签
+                </h1>
+                <p class="text-gray-600 max-w-2xl mx-auto">体验传统占卜文化，感受命运的指引</p>
+            </header>
+            <main class="max-w-3xl mx-auto">
+                <div class="bg-white-translucent rounded-2xl shadow-xl p-6 md:p-8 card-hover">
+                    <div class="flex flex-col items-center">
+                        <button id="action-button" class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50">
+                            开始抽签
+                        </button>
+                        <div id="content-area" class="w-full mt-8 mt-0">
+                            <div id="static-image-container" class="flex justify-center mb-6">
+                                <img id="static-image" src="{{ url_for('static', filename='images/sign.png') }}" alt="签文" class="max-w-full h-auto rounded-lg shadow-md">
+                            </div>
+                            <div id="result-area" class="text-center"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <!-- 遮罩层 -->
+        <div id="overlay" class="overlay"></div>
+        <!-- 验证码输入框 -->
+        <div id="captcha-container" class="captcha-container">
+            <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
+                <h3 class="font-semibold text-xl mb-3 text-dark">请输入验证码</h3>
+                <p class="text-gray-600 text-sm mb-4">输入管理员提供的验证码以继续</p>
+                <!-- 关闭按钮 -->
+                <button id="closeCaptcha" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 focus:outline-none">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="flex gap-3">
+                    <input type="text" id="captcha-input" class="captcha-input flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary/50" placeholder="输入验证码" maxlength="6">
+                    <button id="verify-captcha" class="bg-secondary hover:bg-secondary/90 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                        验证
+                    </button>
+                </div>
+                <p id="captcha-error" class="captcha-error hidden text-red-500 mt-2 text-sm"></p>
+            </div>
+        </div>
+    </div>
+    <!-- 宣传介绍内容 -->
+    <div id="intro-content" class="tab-content intro-content"> <!-- 添加 intro-content 类 -->
+        <div class="container mx-auto px-4 py-8 md:py-12">
+            <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-dark mb-6">关于南普陀寺·观音灵签</h2>
+            <p class="text-gray-600">这里可以添加关于南普陀寺和观音灵签的介绍、文化背景等内容。</p>
+            <!-- 视频播放器 -->
+            <div class="mt-8 rounded-xl overflow-hidden shadow-lg">
+                <div class="relative aspect-video bg-black rounded-xl">
+                    <video id="introVideo" class="w-full h-full object-cover" poster="{{ url_for('static', filename='images/video_cover.jpg') }}">
+                        <source src="{{ url_for('static', filename='video/intro_video.mp4') }}" type="video/mp4">
+                        您的浏览器不支持视频播放。
+                    </video>
+                    <button id="bigPlayButton" class="absolute inset-0 m-auto w-20 h-20 bg-primary/80 hover:bg-primary rounded-full flex items-center justify-center transition-all duration-300 transform hover:scale-110 z-10 opacity-100">
+                        <i class="fa-solid fa-play text-white text-2xl ml-1"></i>
+                    </button>
+                    <!-- 自定义视频控制层 -->
+                    <div id="videoControls" class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 opacity-0 hover:opacity-100 transition-opacity duration-300">
+                        <div class="flex items-center space-x-4 text-white">
+                            <button id="playPauseBtn" class="w-10 h-10 flex items-center justify-center rounded-full bg-primary/80 hover:bg-primary transition-colors">
+                                <i class="fa-solid fa-play"></i>
+                            </button>
+                            <div class="flex-1 h-2 bg-gray-500 rounded-full overflow-hidden">
+                                <div id="progressBar" class="h-full bg-primary w-0"></div>
+                            </div>
+                            <span id="timeDisplay" class="text-sm">0:00</span>
+                            <button id="muteBtn" class="w-8 h-8 flex items-center justify-center">
+                                <i class="fa-solid fa-volume-high"></i>
+                            </button>
+                            <button id="fullscreenBtn" class="w-8 h-8 flex items-center justify-center">
+                                <i class="fa-solid fa-expand"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>验证码生成</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"> <!-- 添加Font Awesome图标 -->
+    <style>
+        .result-box {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #d4edda;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .code-display {
+            font-size: 28px;
+            font-weight: bold;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.1s, box-shadow 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .copy-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background: #0056b3;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="result-box">
+        <h2 class="text-2xl font-bold text-green-600">验证码生成成功！</h2>
+        <p class="text-gray-600">有效时间：{{ expires }}</p>
+
+        <div class="code-display" id="captcha-display">
+            {{ captcha }}
+        </div>
+
+        <p class="text-gray-600">点击下方按钮复制验证码并提供给用户</p>
+
+        <div style="display: flex; gap: 12px; justify-content: center;">
+            <!-- 复制按钮 -->
+            <button class="action-btn copy-btn" onclick="copyCaptcha()">
+                <i class="fas fa-clipboard"></i> 复制验证码
+            </button>
+
+            <!-- 返回按钮 -->
+            <a href="{{ url_for('admin_dashboard') }}">
+                <button class="action-btn back-btn">
+                    <i class="fas fa-arrow-left"></i> 返回管理面板
+                </button>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function copyCaptcha() {
+            // 获取验证码内容
+            const captcha = document.getElementById('captcha-display').textContent;
+
+            // 创建临时文本域
+            const textarea = document.createElement('textarea');
+            textarea.value = captcha;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+
+            // 选择并复制
+            textarea.select();
+            document.execCommand('copy');
+            textarea.remove();
+
+            // 提示用户复制成功
+            alert('验证码已成功复制到剪贴板！');
+        }
+    </script>
+</body>
+</html>

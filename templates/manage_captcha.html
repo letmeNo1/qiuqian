@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>管理验证码</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; padding: 20px; }
+        .manage-box { background: #f8f9fa; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .captcha-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .captcha-table th, .captcha-table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        .captcha-table th { background: #e9ecef; }
+        .btn-delete { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-delete:hover { background: #c82333; }
+        .no-captcha { color: #6c757d; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <div class="manage-box">
+        <h2>管理验证码</h2>
+        <a href="{{ url_for('admin_dashboard') }}">返回管理面板</a>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div style="color: #28a745; margin: 10px 0;">{{ messages[0] }}</div>
+            {% endif %}
+        {% endwith %}
+
+        {% if captchas %}
+            <table class="captcha-table">
+                <thead>
+                    <tr>
+                        <th>验证码</th>
+                        <th>生成时间</th>
+                        <th>过期时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for captcha in captchas %}
+                    <tr>
+                        <td>{{ captcha.code }}</td>
+                        <td>{{ captcha.generated_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                        <td>{{ captcha.expires_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                        <td>
+                            <a href="{{ url_for('delete_captcha', captcha_code=captcha.code) }}">
+                                <button class="btn-delete">删除</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-captcha">当前没有有效验证码</div>
+        {% endif %}
+    </div>
+</body>
+</html>

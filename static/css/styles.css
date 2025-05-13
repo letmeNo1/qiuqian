@@ -1,0 +1,232 @@
+/* Tailwind 自定义工具类 */
+@layer utilities {
+    .content-auto {
+        content-visibility: auto;
+    }
+    .backdrop-blur-sm {
+        backdrop-filter: blur(4px);
+    }
+    .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .card-hover {
+        transition: all 0.3s ease;
+    }
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+}
+
+/* 动画效果 */
+@keyframes shake {
+    0% { transform: translateX(0); }
+    10% { transform: translateX(-10px) rotate(-5deg); }
+    20% { transform: translateX(10px) rotate(5deg); }
+    30% { transform: translateX(-10px) rotate(-5deg); }
+    40% { transform: translateX(10px) rotate(5deg); }
+    50% { transform: translateX(-10px) rotate(-5deg); }
+    60% { transform: translateX(10px) rotate(5deg); }
+    70% { transform: translateX(-10px) rotate(-5deg); }
+    80% { transform: translateX(10px) rotate(5deg); }
+    90% { transform: translateX(-10px) rotate(-5deg); }
+    100% { transform: translateX(0) rotate(0); }
+}
+
+.shake-animation {
+    animation: shake 1s ease-in-out;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.loading {
+    cursor: wait;
+    opacity: 0.7;
+}
+
+/* 背景容器 */
+.bg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('/static/images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+/* 半透明背景 */
+.bg-white-translucent {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+}
+
+/* 遮罩层 */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9998;
+    display: none;
+}
+
+/* 页面加载弹窗 */
+.page-load-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10000;
+    max-width: 90%;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    animation: fadeIn 0.5s ease-out;
+}
+
+/* 验证码弹窗 */
+.captcha-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    display: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -40%); }
+    to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: translate(-50%, -50%); }
+    to { opacity: 0; transform: translate(-50%, -60%); }
+}
+
+.tab-container {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 60px 1rem;
+    z-index: 1000;
+    gap: 8px; /* 按钮间距 */
+}
+
+/* 选项卡按钮样式 */
+.tab-button {
+    --bg-color: #f4f4f4;
+    --bg-hover: #e0e0e0;
+    --bg-active: #3b82f6;
+    --text-color: #333;
+    --text-active: white;
+    --border-radius: 0.5rem;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-hover: 0 4px 6px rgba(0,0,0,0.1);
+    --transition: all 0.2s ease;
+
+    padding: 0.75rem 1.5rem;  /* 保持原有内边距（若需同步调整高度，可结合 padding 修改） */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+
+    /* 关键调整：字体大小调小 50%（原 1rem → 0.5rem） */
+    font-size: 0.75rem;  /* 原 font-size: 1rem */
+
+    font-weight: 500;
+    transition: var(--transition);
+    margin: 0 0.25rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+
+
+#intro-content.intro-content {
+    margin-top: 8rem; /* 这里将上边距设置为 3rem，你可以根据需要调整这个值，比如 2rem、4rem 等 */
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+/* 选中的选项卡按钮样式 */
+.tab-button.active {
+    background-color: var(--bg-active);
+    color: var(--text-active);
+    box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
+    transform: translateY(-2px);
+}
+
+
+.tab-button:hover {
+    background-color: var(--bg-hover);
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-1px);
+}
+
+/* 选项卡内容容器样式 */
+.tab-content {
+    display: none;
+}
+
+/* 显示的选项卡内容样式 */
+.tab-content.active {
+    display: block;
+}
+.tab-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: var(--shadow);
+}
+
+/* 图标样式 */
+.tab-button i {
+    transition: var(--transition);
+}
+
+.tab-button.active i {
+    transform: scale(1.1);
+}
+
+/* 标签组容器 */
+.tab-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#musicControl {
+            position: fixed;
+            top: 6px;
+            right: 6px;
+            z-index: 50;
+            background-color: {{ primary }};
+            color: white;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }

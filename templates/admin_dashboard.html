@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>管理面板</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+        .dashboard-box { background: #f8f9fa; padding: 30px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .form-group { margin: 20px 0; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; }
+        select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; width: 150px; }
+
+        /* 新增按钮样式 */
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .generate-btn { background: #28a745; color: white; }
+        .generate-btn:hover { background: #218838; }
+        .manage-btn { background: #007bff; color: white; }
+        .manage-btn:hover { background: #0056b3; }
+        .logout-btn { background: #dc3545; color: white; }
+        .logout-btn:hover { background: #c82333; }
+    </style>
+</head>
+<body>
+    <div class="dashboard-box">
+        <h2>管理面板</h2>
+
+        <!-- 生成验证码表单 -->
+        <div class="form-group">
+            <form method="post" action="{{ url_for('generate_captcha') }}">
+                <label>选择有效时间：</label>
+                <select name="valid_time">
+                    <option value="1">1分钟</option>
+                    <option value="3">3分钟</option>
+                    <option value="5">5分钟</option>
+                </select>
+                <button type="submit" class="action-btn generate-btn">生成验证码</button>
+            </form>
+        </div>
+
+        <!-- 进入管理界面的大按钮 -->
+        <button class="action-btn manage-btn" onclick="window.location.href='{{ url_for('manage_captcha') }}'">
+            查看/管理现有验证码
+        </button>
+
+        <!-- 退出登录按钮 -->
+        <button class="action-btn logout-btn" onclick="window.location.href='{{ url_for('logout') }}'">
+            退出登录
+        </button>
+    </div>
+</body>
+</html>
