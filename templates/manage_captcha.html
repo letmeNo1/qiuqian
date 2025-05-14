@@ -5,12 +5,59 @@
     <style>
         body { font-family: Arial, sans-serif; max-width: 800px; margin: 30px auto; padding: 20px; }
         .manage-box { background: #f8f9fa; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .captcha-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        .captcha-table th, .captcha-table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        .captcha-table th { background: #e9ecef; }
-        .btn-delete { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-        .btn-delete:hover { background: #c82333; }
-        .no-captcha { color: #6c757d; text-align: center; padding: 20px; }
+        
+        /* 统一表格样式 */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .data-table th {
+            background-color: #f5f7fa;
+            color: #333;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .data-table tbody tr:hover {
+            background-color: #f9fafb;
+            transition: background-color 0.2s ease;
+        }
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .btn-delete:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn-delete:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        
+        .no-data {
+            color: #6c757d;
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
     </style>
 </head>
 <body>
@@ -20,12 +67,14 @@
 
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-                <div style="color: #28a745; margin: 10px 0;">{{ messages[0] }}</div>
+                <div style="color: #28a745; margin: 10px 0; padding: 10px; background-color: #e8f5e9; border-radius: 4px;">
+                    {{ messages[0] }}
+                </div>
             {% endif %}
         {% endwith %}
 
         {% if captchas %}
-            <table class="captcha-table">
+            <table class="data-table">
                 <thead>
                     <tr>
                         <th>验证码</th>
@@ -41,17 +90,109 @@
                         <td>{{ captcha.generated_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
                         <td>{{ captcha.expires_at.strftime("%Y-%m-%d %H:%M:%S") }}</td>
                         <td>
-                            <a href="{{ url_for('delete_captcha', captcha_code=captcha.code) }}">
-                                <button class="btn-delete">删除</button>
-                            </a>
+                            <button class="btn-delete" onclick="deleteCaptcha('{{ captcha.code }}')">
+                                <i class="fa fa-trash"></i> 删除
+                            </button>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         {% else %}
-            <div class="no-captcha">当前没有有效验证码</div>
+            <div class="no-data">当前没有有效验证码</div>
         {% endif %}
+
+        <!-- 定制数据表格 -->
+        <table id="custom-data-table" class="data-table">
+            <thead>
+                <tr>
+                    <th>姓名</th>
+                    <th>住址</th>
+                    <th>验证码</th>
+                    <th>所求之事</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
+
+    <script>
+        // 页面加载完成后调用接口
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const response = await fetch('/get_all_json_data');
+                const data = await response.json();
+
+                const tableBody = document.querySelector('#custom-data-table tbody');
+
+                if (data && data.length > 0) {
+                    data.forEach(item => {
+                        const row = document.createElement('tr');
+                        
+                        // 创建四个单元格：姓名、住址、验证码、所求之事
+                        const nameCell = document.createElement('td');
+                        const addressCell = document.createElement('td');
+                        const captchaCell = document.createElement('td');
+                        const requestCell = document.createElement('td');
+                        
+                        // 从JSON数据中提取相应字段
+                        nameCell.textContent = item.name || '-';
+                        addressCell.textContent = item.address || '-';
+                        captchaCell.textContent = item.captcha || '-';
+                        requestCell.textContent = item.request || '-';
+                        
+                        // 添加到行
+                        row.appendChild(nameCell);
+                        row.appendChild(addressCell);
+                        row.appendChild(captchaCell);
+                        row.appendChild(requestCell);
+                        
+                        // 添加到表格
+                        tableBody.appendChild(row);
+                    });
+                    
+                    // 为表格添加淡入动画
+                    setTimeout(() => {
+                        document.querySelectorAll('#custom-data-table tbody tr').forEach((row, index) => {
+                            row.style.opacity = '0';
+                            row.style.transform = 'translateY(10px)';
+                            setTimeout(() => {
+                                row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                                row.style.opacity = '1';
+                                row.style.transform = 'translateY(0)';
+                            }, 50 * index);
+                        });
+                    }, 100);
+                    
+                } else {
+                    const row = document.createElement('tr');
+                    const cell = document.createElement('td');
+                    cell.colSpan = 4; // 跨4列
+                    cell.className = 'no-data';
+                    cell.textContent = '当前没有相关数据';
+                    row.appendChild(cell);
+                    tableBody.appendChild(row);
+                }
+            } catch (error) {
+                console.error('获取数据失败:', error);
+                const tableBody = document.querySelector('#custom-data-table tbody');
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+                cell.colSpan = 4; // 跨4列
+                cell.className = 'no-data';
+                cell.style.color = '#dc3545';
+                cell.textContent = '获取数据失败，请重试';
+                row.appendChild(cell);
+                tableBody.appendChild(row);
+            }
+        });
+        
+        // 删除验证码的函数
+        function deleteCaptcha(code) {
+            if (confirm(`确定要删除验证码 ${code} 吗？`)) {
+                window.location.href = `/delete_captcha?captcha_code=${code}`;
+            }
+        }
+    </script>
 </body>
 </html>
