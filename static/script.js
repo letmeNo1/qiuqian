@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const staticImage = document.getElementById('static-image');
     const resultArea = document.getElementById('result-area');
     const overlay = document.getElementById('overlay');
+    const userInfoModal = document.getElementById('user-info-modal');
+    const userInfoForm = document.getElementById('user-info-form');
 
     // 控制变量
     let isVerified = false;
@@ -17,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
     let isFirstClickOnResolve = true;
     let hasHolyCup = false;
     let isFront = true;
+    let currnt_captcha = 0
 
     tailwind.config = {
         theme: {
@@ -43,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
 //    const popupImage = document.createElement('img');
 //    popupImage.src = "/static/images/popup_image.jpg";
 //    popupImage.alt = "欢迎图像";
-//    popupImage.style.maxWidth = "90vw";
+//    popupImage.style.maxWidth = "90vw";acz
 //    popupImage.style.maxHeight = "80vh";
 //
 //    // 添加到容器
@@ -73,6 +76,12 @@ document.addEventListener('DOMContentLoaded', function () {
         captchaError.classList.add('hidden');
     }
 
+    function showInfoPopup() {
+        userInfoModal.style.display = 'block';
+
+    }
+
+
     // 验证码验证逻辑
     verifyButton.addEventListener('click', async () => {
         const userInput = captchaInput.value.trim().toUpperCase();
@@ -81,7 +90,9 @@ document.addEventListener('DOMContentLoaded', function () {
         if (userInput === '999999') {
             console.log('作弊代码触发：允许直接开始抽签');
             isVerified = true;
+            currnt_captcha = "999999"
             hideCaptcha();
+            showInfoPopup();
             actionButton.textContent = '开始抽签';
             actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90');
             actionButton.classList.add('bg-primary', 'hover:bg-primary/90');
@@ -105,7 +116,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const data = await response.json();
             if (data.valid) {
                 isVerified = true;
+                currnt_captcha = userInput
+
                 hideCaptcha();
+                showInfoPopup();
                 if (actionButton.textContent === '开始抽签') {
                     handleLotDrawing();
                 }
@@ -346,6 +360,51 @@ document.addEventListener('DOMContentLoaded', function () {
                     </div>
                 `;
             }
+        }
+    });
+
+    userInfoForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(userInfoForm);
+        const name = formData.get('name');
+        const address = formData.get('address');
+        const request = formData.get('request');
+        
+        // 添加验证码和时间戳
+        const timestamp = Date.now();
+        const captcha = currnt_captcha;
+
+        try {
+            const response = await fetch('/upload_json_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name,
+                    address,
+                    request,
+                    captcha,      // 添加验证码
+                    timestamp     // 添加时间戳
+                })
+            });
+
+            const data = await response.json();
+            if (data.message === 'JSON 数据上传成功') {
+                userInfoModal.style.display = 'none';
+                if (actionButton.textContent === '开始抽签') {
+                    handleLotDrawing();
+                }
+            } else {
+                const errorElement = document.getElementById('info-error');
+                errorElement.textContent = data.error || '提交失败，请重试';
+                errorElement.classList.remove('hidden');
+            }
+        } catch (error) {
+            console.error('提交数据出错:', error);
+            const errorElement = document.getElementById('info-error');
+            errorElement.textContent = '网络请求失败，请重试';
+            errorElement.classList.remove('hidden');
         }
     });
 });

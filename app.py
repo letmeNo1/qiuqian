@@ -4,6 +4,7 @@ from flask import Flask, render_template, request, jsonify, url_for, flash, redi
 from datetime import datetime, timedelta
 import string
 import random
+import time
 from waitress import serve
 
 app = Flask(__name__)
@@ -153,16 +154,34 @@ def upload_json_data():
     try:
         json_data = request.get_json()
         if json_data is None:
-            return jsonify({'error': '未提供有效的 JSON 数据'}), 400
+            return jsonify({'error': '未提供有效的 JSON 数据'}), 400    
+            
+        # 验证时间戳 (10分钟有效期)
+        timestamp = json_data.get('timestamp')
+        if not timestamp:
+            return jsonify({'error': '缺少时间戳'}), 400
+            
+        current_time = int(time.time() * 1000)  # 毫秒级时间戳
+        if current_time - timestamp > 10 * 60 * 1000:  # 超过10分钟
+            return jsonify({'error': '请求已过期'}), 400
+
+        # 提取用户信息
+        user_info = {
+            'name': json_data.get('name'),
+            'address': json_data.get('address'),
+            'request': json_data.get('request'),
+            'captcha': json_data.get('captcha'),
+            'timestamp': timestamp  # 保存时间戳到文件中
+        }
 
         # 生成一个唯一的文件名
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"{timestamp}.json"
+        file_timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        filename = f"{file_timestamp}.json"
         file_path = os.path.join(JSON_DIR, filename)
 
         # 将 JSON 数据写入文件
         with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(json_data, f, ensure_ascii=False, indent=4)
+            json.dump(user_info, f, ensure_ascii=False, indent=4)
 
         return jsonify({'message': 'JSON 数据上传成功', 'filename': filename}), 200
 
