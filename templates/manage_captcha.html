@@ -128,7 +128,8 @@
                 const tableBody = document.querySelector('#custom-data-table tbody');
 
                 if (data && data.length > 0) {
-                    data.forEach(item => {
+                    const reversedData = [...data].reverse();
+                    reversedData.forEach(item => {
                         const row = document.createElement('tr');
                         
                         // 创建五个单元格：姓名、住址、验证码、所求之事、时间戳
