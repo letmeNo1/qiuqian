@@ -148,9 +148,6 @@ def get_all_json_data():
 
 @app.route('/upload_json_data', methods=['POST'])
 def upload_json_data():
-    if not is_admin_logged_in():
-        return jsonify({'error': '请先登录'}), 401
-
     try:
         json_data = request.get_json()
         if json_data is None:

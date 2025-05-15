@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     newPopupContainer.style.animation = 'fadeOut 0.5s ease-in forwards';
                     setTimeout(() => {
                         document.body.removeChild(newPopupContainer);
-                    }, 500);
+                    }, 200);
                 });
 
                 newPopupContainer.appendChild(closeButton);
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 5秒后显示关闭按钮
                 setTimeout(() => {
                     closeButton.style.opacity = '1';
-                }, 5000);
+                }, 1);
             }
         }
     }
