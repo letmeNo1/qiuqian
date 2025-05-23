@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
             currnt_captcha = "999999"
             hideCaptcha();
             showInfoPopup();
-            actionButton.textContent = '开始抽签';
+            actionButton.textContent = '开始掷杯';
             actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90');
             actionButton.classList.add('bg-primary', 'hover:bg-primary/90');
             return;
