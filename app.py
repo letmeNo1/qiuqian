@@ -166,8 +166,10 @@ def upload_json_data():
         user_info = {
             'name': json_data.get('name'),
             'address': json_data.get('address'),
-            'request': json_data.get('request'),
+            'request': json_data.get('requestThing'),
+            'signIndex': json_data.get('signIndex'),
             'captcha': json_data.get('captcha'),
+            'births': json_data.get("births"),
             'timestamp': timestamp  # 保存时间戳到文件中
         }
 

@@ -119,6 +119,7 @@
                     <th>所求之事</th>
                     <th>时间戳</th>
                     <th>出生年月</th> <!-- 新增列 -->
+                    <th>签文</tr>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -146,12 +147,14 @@
                         const requestThingCell = document.createElement('td');
                         const timestampCell = document.createElement('td');
                         const birthDateCell = document.createElement('td'); // 新增单元格
+                        const signIndex = document.createElement('td'); // 新增单元格
 
                         // 绑定数据
                         nameCell.textContent = item.name || '-';
                         addressCell.textContent = item.address || '-';
                         captchaCell.textContent = item.captcha || '-';
-                        requestThingCell.textContent = item.requestThing || '-';
+                        requestThingCell.textContent = item.request || '-';
+                        signIndex.textContent = item.signIndex || '-';
 
                         // 处理时间戳
                         if (item.timestamp) {
@@ -171,6 +174,7 @@
                         row.appendChild(requestThingCell);
                         row.appendChild(timestampCell);
                         row.appendChild(birthDateCell); // 新增单元格
+                        row.appendChild(signIndex); // 新增单元格
 
                         // 添加到表格
                         tableBody.appendChild(row);

@@ -15,9 +15,14 @@ document.addEventListener('DOMContentLoaded', function () {
     const requestInput = document.getElementById('request-input');
     const requestInputFull = document.getElementById('request-input-full')
     const inputError = document.getElementById('input-error');
-    var requestThing
 
     // 控制变量
+    var name
+    var births
+    var requestThing
+    var timestamp
+    var captcha
+    var signIndex
     let isVerified = false;
     let isInfoed = false;
     let drawnLot;
@@ -99,6 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <p class="text-gray-600 mt-2">必须掷三次圣杯才是灵签</p>
                 </div>
             `;
+            signIndex = drawnLot
 
             actionButton.textContent = '开始掷杯';
             actionButton.classList.remove('bg-primary', 'hover:bg-primary/90');
@@ -215,6 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
             return;
         }
         if (actionButton.textContent === '开始抽签'){
+
             actionButton.setAttribute('status',2); //
             hasHolyCup = false
             let cupImagesDiv = document.querySelector('.cup-images')
@@ -431,6 +438,30 @@ document.addEventListener('DOMContentLoaded', function () {
     actionButton.addEventListener('click', async () => {
         if (actionButton.textContent === '开始解签' && isFirstClickOnResolve) {
             try {
+            const response = await fetch('/upload_json_data', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name,
+                    address,
+                    births,
+                    requestThing,
+                    captcha, 
+                    signIndex,     // 添加验证码
+                    timestamp     // 添加时间戳
+                })
+            });
+
+            const data = await response.json();
+            console.log(data)
+           
+            } catch (error) {
+                console.error('提交数据出错:', error);
+
+            }
+            try {
                 const response = await fetch('/get_sign_info', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -522,49 +553,16 @@ document.addEventListener('DOMContentLoaded', function () {
     userInfoForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const formData = new FormData(userInfoForm);
-        const name = formData.get('name');
-        const births = formData.get('births');
-        console.log(births)
-        const address = formData.get('address');
+        name = formData.get('name');
+        births = formData.get('births');
+        address = formData.get('address');
         isInfoed = true
         
         // 添加验证码和时间戳
-        const timestamp = Date.now();
-        const captcha = currnt_captcha;
+        timestamp = Date.now();
+        captcha = currnt_captcha;
         userInfoModal.style.display = 'none';
 
-        // try {
-        //     const response = await fetch('/upload_json_data', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/json'
-        //         },
-        //         body: JSON.stringify({
-        //             name,
-        //             address,
-        //             births,
-        //             requestThing,
-        //             captcha,      // 添加验证码
-        //             timestamp     // 添加时间戳
-        //         })
-        //     });
-
-        //     const data = await response.json();
-        //     if (data.message === 'JSON 数据上传成功') {
-        //         userInfoModal.style.display = 'none';
-        //         if (actionButton.textContent === '开始抽签') {
-        //             handleLotDrawing();
-        //         }
-        //     } else {
-        //         const errorElement = document.getElementById('info-error');
-        //         errorElement.textContent = data.error || '提交失败，请重试';
-        //         errorElement.classList.remove('hidden');
-        //     }
-        // } catch (error) {
-        //     console.error('提交数据出错:', error);
-        //     const errorElement = document.getElementById('info-error');
-        //     errorElement.textContent = '网络请求失败，请重试';
-        //     errorElement.classList.remove('hidden');
-        // }
+        
     });
 });
