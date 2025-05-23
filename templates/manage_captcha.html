@@ -58,6 +58,13 @@
             padding: 20px;
             font-style: italic;
         }
+
+        /* 新增列样式 */
+        .data-table th:nth-child(6),
+        .data-table td:nth-child(6) {
+            width: 15%;
+            word-wrap: break-word;
+        }
     </style>
 </head>
 <body>
@@ -103,7 +110,6 @@
         {% endif %}
 
         <!-- 定制数据表格 -->
-        <!-- 定制数据表格 -->
         <table id="custom-data-table" class="data-table">
             <thead>
                 <tr>
@@ -111,7 +117,8 @@
                     <th>住址</th>
                     <th>验证码</th>
                     <th>所求之事</th>
-                    <th>时间戳</th> <!-- 添加时间戳列 -->
+                    <th>时间戳</th>
+                    <th>出生年月</th> <!-- 新增列 -->
                 </tr>
             </thead>
             <tbody></tbody>
@@ -131,40 +138,44 @@
                     const reversedData = [...data].reverse();
                     reversedData.forEach(item => {
                         const row = document.createElement('tr');
-                        
-                        // 创建五个单元格：姓名、住址、验证码、所求之事、时间戳
+
+                        // 创建单元格
                         const nameCell = document.createElement('td');
                         const addressCell = document.createElement('td');
                         const captchaCell = document.createElement('td');
-                        const requestCell = document.createElement('td');
-                        const timestampCell = document.createElement('td'); // 添加时间戳单元格
-                        
-                        // 从JSON数据中提取相应字段
+                        const requestThingCell = document.createElement('td');
+                        const timestampCell = document.createElement('td');
+                        const birthDateCell = document.createElement('td'); // 新增单元格
+
+                        // 绑定数据
                         nameCell.textContent = item.name || '-';
                         addressCell.textContent = item.address || '-';
                         captchaCell.textContent = item.captcha || '-';
-                        requestCell.textContent = item.request || '-';
-                        
+                        requestThingCell.textContent = item.requestThing || '-';
+
                         // 处理时间戳
                         if (item.timestamp) {
-                            // 假设时间戳是ISO格式或毫秒数，根据实际情况调整
                             const date = new Date(item.timestamp);
-                            timestampCell.textContent = date.toLocaleString(); // 转换为本地时间格式
+                            timestampCell.textContent = date.toLocaleString();
                         } else {
                             timestampCell.textContent = '-';
                         }
-                        
+
+                        // 绑定新增列数据（根据实际字段名调整）
+                        birthDateCell.textContent = item.birth_date || item.births || '-';
+
                         // 添加到行
                         row.appendChild(nameCell);
                         row.appendChild(addressCell);
                         row.appendChild(captchaCell);
-                        row.appendChild(requestCell);
-                        row.appendChild(timestampCell); // 添加时间戳单元格到行
-                        
+                        row.appendChild(requestThingCell);
+                        row.appendChild(timestampCell);
+                        row.appendChild(birthDateCell); // 新增单元格
+
                         // 添加到表格
                         tableBody.appendChild(row);
                     });
-                    
+
                     // 为表格添加淡入动画
                     setTimeout(() => {
                         document.querySelectorAll('#custom-data-table tbody tr').forEach((row, index) => {
@@ -177,11 +188,11 @@
                             }, 50 * index);
                         });
                     }, 100);
-                    
+
                 } else {
                     const row = document.createElement('tr');
                     const cell = document.createElement('td');
-                    cell.colSpan = 5; // 跨5列（因为现在有5列）
+                    cell.colSpan = 6; // 跨6列（因为现在有6列）
                     cell.className = 'no-data';
                     cell.textContent = '当前没有相关数据';
                     row.appendChild(cell);
@@ -192,7 +203,7 @@
                 const tableBody = document.querySelector('#custom-data-table tbody');
                 const row = document.createElement('tr');
                 const cell = document.createElement('td');
-                cell.colSpan = 5; // 跨5列
+                cell.colSpan = 6; // 跨6列
                 cell.className = 'no-data';
                 cell.style.color = '#dc3545';
                 cell.textContent = '获取数据失败，请重试';
@@ -200,7 +211,6 @@
                 tableBody.appendChild(row);
             }
         });
-        
         
         // 删除验证码的函数
         function deleteCaptcha(code) {

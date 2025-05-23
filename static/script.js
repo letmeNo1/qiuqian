@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const overlay = document.getElementById('overlay');
     const userInfoModal = document.getElementById('user-info-modal');
     const userInfoForm = document.getElementById('user-info-form');
+    const requestInput = document.getElementById('request-input');
+    const requestInputFull = document.getElementById('request-input-full')
+    var requestThing
 
     // 控制变量
     let isVerified = false;
@@ -151,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function () {
             actionButton.classList.add('bg-secondary', 'hover:bg-secondary/90');
             cupThrowCount = 0;
             allHolyCups = true;
+            requestInputFull.remove()
         });
     }
 
@@ -271,6 +275,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+    requestInput.addEventListener('change', (e) => {
+        requestThing = e.target.value;
+        console.log('输入完成后的内容:', requestThing);
+    });
+
     // 解签逻辑
     actionButton.addEventListener('click', async () => {
         if (actionButton.textContent === '开始解签' && isFirstClickOnResolve) {
@@ -367,8 +376,9 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
         const formData = new FormData(userInfoForm);
         const name = formData.get('name');
+        const births = formData.get('births');
+        console.log(births)
         const address = formData.get('address');
-        const request = formData.get('request');
         
         // 添加验证码和时间戳
         const timestamp = Date.now();
@@ -383,7 +393,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 body: JSON.stringify({
                     name,
                     address,
-                    request,
+                    births,
+                    requestThing,
                     captcha,      // 添加验证码
                     timestamp     // 添加时间戳
                 })

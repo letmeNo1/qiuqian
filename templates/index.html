@@ -52,6 +52,14 @@
                         <button id="action-button" class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50">
                             开始抽签
                         </button>
+                        <div id=request-input-full class="w-full mt-6"> <!-- mt-6 控制与按钮的间距 -->
+                            <input
+                                type="text"
+                                id="request-input"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                                placeholder="请输入您想求问的事情"
+                            >
+                        </div>
                         <div id="content-area" class="w-full mt-8 mt-0">
                             <div id="static-image-container" class="flex justify-center mb-6">
                                 <img id="static-image" src="{{ url_for('static', filename='images/sign.png') }}" alt="签文" class="max-w-full h-auto rounded-lg shadow-md">
@@ -95,13 +103,14 @@
                         <label for="info-name" class="block text-gray-700 text-sm font-medium mb-1">姓名</label>
                         <input type="text" id="info-name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="请输入您的姓名" required>
                     </div>
-                    <div class="mb-4">
-                        <label for="info-address" class="block text-gray-700 text-sm font-medium mb-1">地址</label>
-                        <input type="text" id="info-address" name="address" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="请输入您的地址" required>
+                   <div class="mb-4">
+                        <label for="info-births" class="block text-gray-700 text-sm font-medium mb-1">出生年月</label>
+                        <!-- 改为 month 类型，添加格式属性 -->
+                        <input type="month" id="info-births" name="births" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="选择年月" required value="2025-05" >
                     </div>
                     <div class="mb-4">
-                        <label for="info-request" class="block text-gray-700 text-sm font-medium mb-1">所求之事</label>
-                        <textarea id="info-request" name="request" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="请简要描述您想求问的事情" required></textarea>
+                        <label for="info-address" class="block text-gray-700 text-sm font-medium mb-1">家庭住址</label>
+                        <textarea id="info-address" name="address" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="请输入家庭住址" required></textarea>
                     </div>
                     <div class="flex gap-3">
                         <button type="button" id="cancel-info" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors">
