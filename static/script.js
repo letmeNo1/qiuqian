@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const verifyButton = document.getElementById('verify-captcha');
     const captchaError = document.getElementById('captcha-error');
     const actionButton = document.getElementById('action-button');
+    actionButton.setAttribute('status', 1); //
+
     const captchaContainer = document.getElementById('captcha-container');
     const staticImage = document.getElementById('static-image');
     const resultArea = document.getElementById('result-area');
@@ -12,17 +14,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const userInfoForm = document.getElementById('user-info-form');
     const requestInput = document.getElementById('request-input');
     const requestInputFull = document.getElementById('request-input-full')
+    const inputError = document.getElementById('input-error');
     var requestThing
 
     // 控制变量
     let isVerified = false;
+    let isInfoed = false;
     let drawnLot;
     let cupThrowCount = 0;
-    let allHolyCups = true;
     let isFirstClickOnResolve = true;
     let hasHolyCup = false;
     let isFront = true;
     let currnt_captcha = 0
+    staticImage.style.display = 'none';
 
     tailwind.config = {
         theme: {
@@ -84,6 +88,68 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }
 
+     // 处理抽签逻辑
+    function handleLotDrawing() {
+        shakeAndHideImage(async () => {
+
+            drawnLot = Math.floor(Math.random() * 100) + 1;
+            resultArea.innerHTML = `
+                <div class="bg-white rounded-lg p-4 shadow-md mb-6">
+                    <p class="text-lg font-medium">你抽中了第 <span class="text-primary font-bold">${drawnLot}</span> 个签</p>
+                    <p class="text-gray-600 mt-2">必须掷三次圣杯才是灵签</p>
+                </div>
+            `;
+
+            actionButton.textContent = '开始掷杯';
+            actionButton.classList.remove('bg-primary', 'hover:bg-primary/90');
+            actionButton.classList.add('bg-secondary', 'hover:bg-secondary/90');
+            cupThrowCount = 0;
+            allHolyCups = true;
+            requestInputFull.remove()
+        });
+    }
+
+    // 图像晃动动画
+    function shakeAndHideImage(callback) {
+        staticImage.style.display = 'block';
+        staticImage.classList.add('shake-animation');
+        setTimeout(() => {
+            staticImage.classList.remove('shake-animation');
+            staticImage.style.display = 'none';
+            callback?.();
+        }, 1000);
+    }
+
+    // 重置状态
+    function resetState() {
+        drawnLot = null;
+        first_drawnLot  = null;
+        cupThrowCount = 0;
+        allHolyCups = true;
+        isFirstClickOnResolve = true;
+        actionButton.textContent = '开始抽签';
+        actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90', 'bg-accent', 'hover:bg-accent/90', 'bg-gray-500');
+        actionButton.classList.add('bg-primary', 'hover:bg-primary/90');
+        actionButton.disabled = false;
+        resultArea.innerHTML = '';
+        staticImage.style.display = 'block';
+    }
+
+    // 重置状态
+    function resetState2() {
+        drawnLot = null;
+        first_drawnLot  = null;
+        cupThrowCount = 0;
+        allHolyCups = true;
+        isFirstClickOnResolve = true;
+        actionButton.textContent = '开始掷杯';
+        actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90', 'bg-accent', 'hover:bg-accent/90', 'bg-gray-500');
+        actionButton.classList.add('bg-primary', 'hover:bg-primary/90');
+        actionButton.disabled = false;
+        resultArea.innerHTML = '';
+        actionButton.setAttribute('status', 1); //
+        // staticImage.style.display = 'none';
+    }
 
     // 验证码验证逻辑
     verifyButton.addEventListener('click', async () => {
@@ -95,7 +161,6 @@ document.addEventListener('DOMContentLoaded', function () {
             isVerified = true;
             currnt_captcha = "999999"
             hideCaptcha();
-            showInfoPopup();
             actionButton.textContent = '开始掷杯';
             actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90');
             actionButton.classList.add('bg-primary', 'hover:bg-primary/90');
@@ -122,10 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 currnt_captcha = userInput
 
                 hideCaptcha();
-                showInfoPopup();
-                if (actionButton.textContent === '开始抽签') {
-                    handleLotDrawing();
-                }
+              
             } else {
                 captchaError.textContent = '验证码错误或已过期';
                 captchaError.classList.remove('hidden');
@@ -138,50 +200,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 处理抽签逻辑
-    function handleLotDrawing() {
-        shakeAndHideImage(async () => {
-            drawnLot = Math.floor(Math.random() * 100) + 1;
-            resultArea.innerHTML = `
-                <div class="bg-white rounded-lg p-4 shadow-md mb-6">
-                    <p class="text-lg font-medium">你抽中了第 <span class="text-primary font-bold">${drawnLot}</span> 个签</p>
-                    <p class="text-gray-600 mt-2">必须掷三次圣杯才是灵签</p>
-                </div>
-            `;
-
-            actionButton.textContent = '投掷圣杯';
-            actionButton.classList.remove('bg-primary', 'hover:bg-primary/90');
-            actionButton.classList.add('bg-secondary', 'hover:bg-secondary/90');
-            cupThrowCount = 0;
-            allHolyCups = true;
-            requestInputFull.remove()
-        });
-    }
-
-    // 图像晃动动画
-    function shakeAndHideImage(callback) {
-        staticImage.style.display = 'block';
-        staticImage.classList.add('shake-animation');
-        setTimeout(() => {
-            staticImage.classList.remove('shake-animation');
-            staticImage.style.display = 'none';
-            callback?.();
-        }, 1000);
-    }
-
-    // 重置状态
-    function resetState() {
-        drawnLot = null;
-        cupThrowCount = 0;
-        allHolyCups = true;
-        isFirstClickOnResolve = true;
-        actionButton.textContent = '开始抽签';
-        actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90', 'bg-accent', 'hover:bg-accent/90', 'bg-gray-500');
-        actionButton.classList.add('bg-primary', 'hover:bg-primary/90');
-        actionButton.disabled = false;
-        resultArea.innerHTML = '';
-        staticImage.style.display = 'block';
-    }
+   
 
     // 主按钮点击事件
     actionButton.addEventListener('click', () => {
@@ -190,90 +209,218 @@ document.addEventListener('DOMContentLoaded', function () {
             showCaptcha();
             return;
         }
-
-        if (!drawnLot) {
-            if (actionButton.textContent === '重新抽签') {
-                resetState();
-                return;
-            }
-            handleLotDrawing();
-        } else {
-            if (cupThrowCount >= 3 ||hasHolyCup) return;
-
-            // 生成三种杯象的随机结果（1/3概率）
-            const cupType = Math.floor(Math.random() * 3);
-            const cupImg = document.createElement('img');
-
-            let cupName, cupSrc, cupColorClass;
-
-            if (cupType === 0) {
-                // 笑杯
-                cupName = '笑杯';
-                cupSrc = "static/images/smile_cup.png";
-                cupColorClass = 'border-yellow-500';
-            } else if (cupType === 1) {
-                // 圣杯
-                cupName = '圣杯';
-                cupSrc = "static/images/holy_cup.png";
-                cupColorClass = 'border-green-500';
-                hasHolyCup = true; // 标记出现了圣杯
+        
+        if (!isInfoed){
+            showInfoPopup();
+            return;
+        }
+        if (actionButton.textContent === '开始抽签'){
+            actionButton.setAttribute('status',2); //
+            hasHolyCup = false
+            let cupImagesDiv = document.querySelector('.cup-images')
+            cupImagesDiv.style.display = 'none';
+            resultArea.innerHTML = ""
+            if (!drawnLot) {
+                if (actionButton.textContent === '重新抽签') {
+                    resetState();
+                    return;
+                }
+                handleLotDrawing();
             } else {
-                // 阴杯
-                cupName = '阴杯';
-                cupSrc = "static/images/yin_cup.png";
-                cupColorClass = 'border-blue-500';
+                actionButton.setAttribute('status',2); //
+
             }
-
-            cupImg.src = cupSrc;
-            cupImg.alt = cupName;
-            cupImg.classList.add('max-w-[80px]', 'h-auto','mx-2', 'rounded', 'border-2', cupColorClass);
-
-            let cupImagesDiv = document.querySelector('.cup-images') || document.createElement('div');
-            if (!cupImagesDiv.parentElement) {
-                cupImagesDiv.classList.add('cup-images', 'flex', 'justify-center','my-6');
-                resultArea.appendChild(cupImagesDiv);
+        }else if(actionButton.textContent === '开始掷杯'){
+            if (requestInput.value.trim() === '') {
+                inputError.classList.remove('hidden');
+                requestInput.classList.add('border-red-500');
+                requestInput.focus();
+                return;
+                } else {
+                inputError.classList.add('hidden');
+                requestInput.classList.remove('border-red-500');
+                
+                // 这里可以添加表单提交或其他操作
+                console.log('输入有效，可以继续执行后续操作');
             }
+            if (actionButton.getAttribute("status") ==1){
+                if (cupThrowCount >= 3 ||hasHolyCup) return;
+                resultArea.innerHTML = '';
+                // 生成三种杯象的随机结果（1/3概率）
+                const cupType = Math.floor(Math.random() * 3);
+                const cupImg = document.createElement('img');
 
-            // 添加动画效果
-            cupImg.style.opacity = '0';
-            cupImg.style.transform ='scale(0.5)';
-            cupImagesDiv.appendChild(cupImg);
+                let cupName, cupSrc, cupColorClass;
 
-            // 触发重排后添加动画
-            setTimeout(() => {
-                cupImg.style.transition = 'all 0.5s ease';
-                cupImg.style.opacity = '1';
-                cupImg.style.transform ='scale(1)';
-            }, 10);
+                if (cupType === 0) {
+                    // 笑杯
+                    cupName = '笑杯';
+                    cupSrc = "static/images/smile_cup.png";
+                    cupColorClass = 'border-yellow-500';
+                } else if (cupType === 1) {
+                    // 圣杯
+                    cupName = '圣杯';
+                    cupSrc = "static/images/holy_cup.png";
+                    cupColorClass = 'border-green-500';
+                    hasHolyCup = true; // 标记出现了圣杯
+                } else {
+                    // 阴杯
+                    cupName = '阴杯';
+                    cupSrc = "static/images/yin_cup.png";
+                    cupColorClass = 'border-blue-500';
+                }
 
-            cupThrowCount++;
+                cupImg.src = cupSrc;
+                cupImg.alt = cupName;
+                cupImg.classList.add('max-w-[80px]', 'h-auto','mx-2', 'rounded', 'border-2', cupColorClass);
 
-            if (cupThrowCount === 3|| hasHolyCup) {
+                let cupImagesDiv = document.querySelector('.cup-images') || document.createElement('div');
+                if (!cupImagesDiv.parentElement) {
+                    console.log("添加圣杯")
+                    cupImagesDiv.classList.add('cup-images', 'flex', 'justify-center','my-6');
+                    resultArea.appendChild(cupImagesDiv);
+                }
+
+                // 添加动画效果
+                cupImg.style.opacity = '0';
+                cupImg.style.transform ='scale(0.5)';
+                cupImagesDiv.appendChild(cupImg);
+
+                // 触发重排后添加动画
                 setTimeout(() => {
-                    if (hasHolyCup) {
-                        resultArea.innerHTML += `
-                            <div class="bg-green-50 border border-green-200 text-green-700 rounded-lg p-4 mt-6">
-                                <p class="font-medium">投掷中出现圣杯，此签为灵签！</p>
-                            </div>
-                        `;
-                        actionButton.textContent = '开始解签';
-                        actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90');
-                        actionButton.classList.add('bg-accent', 'hover:bg-accent/90');
-                    } else {
-                        resultArea.innerHTML += `
-                            <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mt-6">
-                                <p class="font-medium">三次投掷未出现圣杯，此签不灵验</p>
-                            </div>
-                        `;
-                        actionButton.textContent = '重新抽签';
-                        actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90');
-                        actionButton.classList.add('bg-primary', 'hover:bg-primary/90');
-                        drawnLot = null;
-                    }
-                }, 600);
+                    cupImg.style.transition = 'all 0.5s ease';
+                    cupImg.style.opacity = '1';
+                    cupImg.style.transform ='scale(1)';
+                }, 10);
+
+                cupThrowCount++;
+
+                if (cupThrowCount === 3|| hasHolyCup) {
+                    setTimeout(() => {
+                        if (hasHolyCup) {
+                            resultArea.innerHTML += `
+                                <div class="bg-green-50 border border-green-200 text-green-700 rounded-lg p-4 mt-6">
+                                    <p class="font-medium">投掷中出现圣杯，可以开始抽签！</p>
+                                </div>
+                            `;
+                            actionButton.textContent = '开始抽签';
+                            actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90');
+                            actionButton.classList.add('bg-accent', 'hover:bg-accent/90');
+                        } else {
+                            resultArea.innerHTML += `
+                                <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mt-6">
+                                    <p class="font-medium">三次投掷未出现圣杯，请改日再问</p>
+                                </div>
+                            `;
+                            actionButton.textContent = '重新投掷';
+                            actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90');
+                            actionButton.classList.add('bg-primary', 'hover:bg-primary/90');
+                            drawnLot = null;
+                            first_drawnLot =true
+                        }
+                    }, 600);
+                }
+            }else{
+                console.log("开始制备三")
+
+                if (cupThrowCount >= 3 ||hasHolyCup) return;
+
+                // 生成三种杯象的随机结果（1/3概率）
+                const cupType = Math.floor(Math.random() * 3);
+                const cupImg = document.createElement('img');
+
+                let cupName, cupSrc, cupColorClass;
+
+                if (cupType === 0) {
+                    // 笑杯
+                    cupName = '笑杯';
+                    cupSrc = "static/images/smile_cup.png";
+                    cupColorClass = 'border-yellow-500';
+                } else if (cupType === 1) {
+                    // 圣杯
+                    cupName = '圣杯';
+                    cupSrc = "static/images/holy_cup.png";
+                    cupColorClass = 'border-green-500';
+                    hasHolyCup = true; // 标记出现了圣杯
+                } else {
+                    // 阴杯
+                    cupName = '阴杯';
+                    cupSrc = "static/images/yin_cup.png";
+                    cupColorClass = 'border-blue-500';
+                }
+
+                cupImg.src = cupSrc;
+                cupImg.alt = cupName;
+                cupImg.classList.add('max-w-[80px]', 'h-auto','mx-2', 'rounded', 'border-2', cupColorClass);
+
+                let cupImagesDiv = document.querySelector('.cup-images') || document.createElement('div');
+                if (!cupImagesDiv.parentElement) {
+                    console.log("添加圣杯")
+                    cupImagesDiv.classList.add('cup-images', 'flex', 'justify-center','my-6');
+                    resultArea.appendChild(cupImagesDiv);
+                }
+
+                // 添加动画效果
+                cupImg.style.opacity = '0';
+                cupImg.style.transform ='scale(0.5)';
+                cupImagesDiv.appendChild(cupImg);
+
+                // 触发重排后添加动画
+                setTimeout(() => {
+                    cupImg.style.transition = 'all 0.5s ease';
+                    cupImg.style.opacity = '1';
+                    cupImg.style.transform ='scale(1)';
+                }, 10);
+
+                cupThrowCount++;
+
+                if (cupThrowCount === 3|| hasHolyCup) {
+                    setTimeout(() => {
+                        if (hasHolyCup) {
+                            resultArea.innerHTML += `
+                                <div class="bg-green-50 border border-green-200 text-green-700 rounded-lg p-4 mt-6">
+                                    <p class="font-medium">投掷中出现圣杯，此签为灵签！</p>
+                                </div>
+                            `;
+                            actionButton.textContent = '开始解签';
+                            actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90');
+                            actionButton.classList.add('bg-accent', 'hover:bg-accent/90');
+                        } else {
+                            resultArea.innerHTML += `
+                                <div class="bg-red-50 border border-red-200 text-red-700 rounded-lg p-4 mt-6">
+                                    <p class="font-medium">三次投掷未出现圣杯，此签不灵验</p>
+                                </div>
+                            `;
+                            actionButton.textContent = '重新抽签';
+                            actionButton.classList.remove('bg-secondary', 'hover:bg-secondary/90');
+                            actionButton.classList.add('bg-primary', 'hover:bg-primary/90');
+                            drawnLot = null;
+                        }
+                    }, 600);
+                }
             }
+        }else if(actionButton.textContent === '重新投掷'){
+                resetState2()
+        }else if(actionButton.textContent === '重新抽签'){
+                resetState()
+                handleLotDrawing();
+        }
+
+        
+    });
+
+    requestInput.addEventListener('click', (e) => {
+        if (!isVerified) {
+            showCaptcha();
+            return;
+        }
+        console.log("点击输入框")
+        if (!isInfoed){
+            showInfoPopup();
+            return;
         }
     });
+
 
     requestInput.addEventListener('change', (e) => {
         requestThing = e.target.value;
@@ -379,43 +526,45 @@ document.addEventListener('DOMContentLoaded', function () {
         const births = formData.get('births');
         console.log(births)
         const address = formData.get('address');
+        isInfoed = true
         
         // 添加验证码和时间戳
         const timestamp = Date.now();
         const captcha = currnt_captcha;
+        userInfoModal.style.display = 'none';
 
-        try {
-            const response = await fetch('/upload_json_data', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name,
-                    address,
-                    births,
-                    requestThing,
-                    captcha,      // 添加验证码
-                    timestamp     // 添加时间戳
-                })
-            });
+        // try {
+        //     const response = await fetch('/upload_json_data', {
+        //         method: 'POST',
+        //         headers: {
+        //             'Content-Type': 'application/json'
+        //         },
+        //         body: JSON.stringify({
+        //             name,
+        //             address,
+        //             births,
+        //             requestThing,
+        //             captcha,      // 添加验证码
+        //             timestamp     // 添加时间戳
+        //         })
+        //     });
 
-            const data = await response.json();
-            if (data.message === 'JSON 数据上传成功') {
-                userInfoModal.style.display = 'none';
-                if (actionButton.textContent === '开始抽签') {
-                    handleLotDrawing();
-                }
-            } else {
-                const errorElement = document.getElementById('info-error');
-                errorElement.textContent = data.error || '提交失败，请重试';
-                errorElement.classList.remove('hidden');
-            }
-        } catch (error) {
-            console.error('提交数据出错:', error);
-            const errorElement = document.getElementById('info-error');
-            errorElement.textContent = '网络请求失败，请重试';
-            errorElement.classList.remove('hidden');
-        }
+        //     const data = await response.json();
+        //     if (data.message === 'JSON 数据上传成功') {
+        //         userInfoModal.style.display = 'none';
+        //         if (actionButton.textContent === '开始抽签') {
+        //             handleLotDrawing();
+        //         }
+        //     } else {
+        //         const errorElement = document.getElementById('info-error');
+        //         errorElement.textContent = data.error || '提交失败，请重试';
+        //         errorElement.classList.remove('hidden');
+        //     }
+        // } catch (error) {
+        //     console.error('提交数据出错:', error);
+        //     const errorElement = document.getElementById('info-error');
+        //     errorElement.textContent = '网络请求失败，请重试';
+        //     errorElement.classList.remove('hidden');
+        // }
     });
 });

@@ -49,6 +49,7 @@
             <main class="max-w-3xl mx-auto">
                 <div class="bg-white-translucent rounded-2xl shadow-xl p-6 md:p-8 card-hover">
                     <div class="flex flex-col items-center">
+                        <!-- <p>在求问之前先，开始掷杯，若三次中出现圣杯则表示神明允许，否则择日再问</p> -->
                         <button id="action-button" class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/50">
                             开始掷杯
                         </button>
@@ -59,13 +60,17 @@
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                                 placeholder="请输入您想求问的事情"
                             >
-                        </div>
-                        <!-- <div id="content-area" class="w-full mt-8 mt-0">
-                            <div id="static-image-container" class="flex justify-center mb-6">
-                                <img id="static-image" src="{{ url_for('static', filename='images/sign.png') }}" alt="签文" class="max-w-full h-auto rounded-lg shadow-md">
+                            <div id="input-error" class="hidden mt-1 text-red-500 text-sm">
+                                输入框不能为空
                             </div>
+                        </div>
+                        <div id="content-area" class="w-full mt-6 mt-0">
                             <div id="result-area" class="text-center"></div>
-                        </div> -->
+
+                            <div id="static-image-container" class="flex justify-center mb-6">
+                                <img id="static-image" src="{{ url_for('static', filename='images/sign.png') }}" alt="签文" class="max-w-full h-auto">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -93,7 +98,6 @@
          <div id="user-info-modal" class="captcha-container">
             <div class="bg-white rounded-xl shadow-2xl p-6 w-full max-w-md">
                 <h3 class="font-semibold text-xl mb-3 text-dark">请填写以下信息</h3>
-                <p class="text-gray-600 text-sm mb-4">请填写您的基本信息以进行抽签</p>
                 <!-- 关闭按钮 -->
                 <button id="closeInfoModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 focus:outline-none">
                     <i class="fa-solid fa-xmark"></i>
@@ -104,13 +108,13 @@
                         <input type="text" id="info-name" name="name" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="请输入您的姓名" required>
                     </div>
                    <div class="mb-4">
-                        <label for="info-births" class="block text-gray-700 text-sm font-medium mb-1">出生年月</label>
-                        <!-- 改为 month 类型，添加格式属性 -->
-                        <input type="month" id="info-births" name="births" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="选择年月" required value="2025-05" >
-                    </div>
+                    <label for="info-births" class="block text-gray-700 text-sm font-medium mb-1">出生日期</label>
+                    <!-- 改为 date 类型，添加格式属性 -->
+                    <input type="date" id="info-births" name="births" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" required value="2025-05-23">
+                </div>
                     <div class="mb-4">
-                        <label for="info-address" class="block text-gray-700 text-sm font-medium mb-1">家庭住址</label>
-                        <textarea id="info-address" name="address" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="请输入家庭住址" required></textarea>
+                        <label for="info-address" class="block text-gray-700 text-sm font-medium mb-1">现住址</label>
+                        <textarea id="info-address" name="address" rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="请输入现住址" required></textarea>
                     </div>
                     <div class="flex gap-3">
                         <button type="button" id="cancel-info" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition-colors">

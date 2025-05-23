@@ -140,7 +140,7 @@
                         <p class="text-gray-600 mt-2">必须掷三次圣杯才是灵签</p>
                     `;
 
-                    actionButton.textContent = '投掷圣杯';
+                    actionButton.textContent = '开始掷杯';
                     actionButton.classList.remove('bg-primary', 'hover:bg-primary/90');
                     actionButton.classList.add('bg-secondary', 'hover:bg-secondary/90');
                     cupThrowCount = 0;
